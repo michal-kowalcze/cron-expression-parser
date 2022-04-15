@@ -40,7 +40,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'eu.kowalcze.michal.kotlin.AppKt'
+    mainClass = 'eu.kowalcze.michal.kotlin.cron.AppKt'
 }
 test {
     useJUnitPlatform()
