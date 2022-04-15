@@ -23,9 +23,12 @@ fine.
 
 ## Development
 
-### Structure
+### Project structure
 
 TBC (packages,..)
+
+### Code style
+This project contains `.editorconfig` file. Configure your IDE to use it.
 
 ### Dependencies
 
