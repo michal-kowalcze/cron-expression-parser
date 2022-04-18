@@ -7,6 +7,7 @@ class CronExpressionParserService {
     private val parsers = listOf(
         AnyValueParser,
         RangeOfValuesParser,
+        AnyWithStepParser,
         SingleValueParser,
     )
 

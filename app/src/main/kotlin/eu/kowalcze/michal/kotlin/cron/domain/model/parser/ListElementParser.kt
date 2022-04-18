@@ -65,6 +65,27 @@ object RangeOfValuesParser : ListElementParser {
     private val RANGE_REGEX = Regex("(\\d+)-(\\d+)(/(\\d+))?")
 }
 
+object AnyWithStepParser : ListElementParser {
+    override fun <TYPE : CalendarField> tryParse(
+        value: String,
+        fieldIndex: Int,
+        limit: IntRange
+    ) =
+        ANY_WITH_STEP_REGEX.matchEntire(value)?.let { matchResult ->
+            val step = matchResult.groupValues[1].toInt()
+
+            val range = IntProgression.fromClosedRange(
+                rangeStart = limit.first,
+                rangeEnd = limit.last,
+                step = step,
+            )
+
+            RangeOfValuesFieldPattern<TYPE>(range)
+        }
+
+    private val ANY_WITH_STEP_REGEX = Regex("\\*/(\\d+)")
+}
+
 class EmptyRangeException(value: String, fieldIndex: Int) :
     IllegalArgumentException("Provided value: '${value}' at index:${fieldIndex} defines an empty range")
 
