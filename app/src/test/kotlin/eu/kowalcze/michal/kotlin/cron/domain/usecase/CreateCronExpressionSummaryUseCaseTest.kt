@@ -1,49 +1,65 @@
 package eu.kowalcze.michal.kotlin.cron.domain.usecase
 
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpressionSummary
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
-import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionNotMatched
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.inspectors.forAll
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 
-internal class CreateCronExpressionSummaryUseCaseTest : StringSpec({
+internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
     val tested = CreateCronExpressionSummaryUseCase(CronExpressionParserService())
 
-    "should not convert line due to parsing problem (regex not matched)"{
-        listOf(
-            "1",
-            "1 2",
-            "1 2 2",
-            "1 2 4 5",
-            "1 2 3 4 5",
-        ).forAll { line ->
-            // given
-            val cronExpressionLine = CronExpressionLine(line)
+    test("should provide proper summary for match-all") {
+        // given
+        val line = CronExpressionLine("* * * * * a command with some space-separated arguments")
 
-            // when
-            val exception = shouldThrow<CronExpressionNotMatched> { tested.parse(cronExpressionLine) }
+        // when
+        val cronExpressionSummary = tested.parse(line)
 
-            // then
-            exception.message shouldBe "Provided input: '${line}' does not match a cron expression defined by the regex: (\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)"
-        }
+        // then
+        cronExpressionSummary shouldHaveAllMinutes IntRange(0, 59).distinct()
+        cronExpressionSummary shouldHaveAllHours IntRange(0, 23).distinct()
+        cronExpressionSummary shouldHaveAllDaysOfMonth IntRange(1, 31).distinct()
+        cronExpressionSummary shouldHaveAllMonths IntRange(1, 12).distinct()
+        cronExpressionSummary shouldHaveAllDaysOfWeek IntRange(1, 7).distinct()
+        cronExpressionSummary.command.value shouldBe "a command with some space-separated arguments"
     }
 
-    "should create a valid cron expression"{
-        listOf(
-            "* * * * * a-simple-command",
-            "* * * * * a-simple-command with blank arguments",
-        ).forAll { line ->
-            // given
-            val cronExpressionLine = CronExpressionLine(line)
+    test("should provide proper summary for value-specific") {
+        // given
+        val line = CronExpressionLine("1 1,2,5 1,10 6 7 simple-command")
 
-            // when
-            val summary = tested.parse(cronExpressionLine)
+        // when
+        val cronExpressionSummary = tested.parse(line)
 
-            // then
-            summary shouldNotBe null
-        }
+        // then
+        cronExpressionSummary shouldHaveAllMinutes listOf(1)
+        cronExpressionSummary shouldHaveAllHours listOf(1, 2, 5)
+        cronExpressionSummary shouldHaveAllDaysOfMonth listOf(1, 10)
+        cronExpressionSummary shouldHaveAllMonths listOf(6)
+        cronExpressionSummary shouldHaveAllDaysOfWeek listOf(7)
+        cronExpressionSummary.command.value shouldBe "simple-command"
     }
 })
+
+
+infix fun CronExpressionSummary.shouldHaveAllMinutes(values: Collection<Int>) {
+    minute.map { it.value } shouldContainAll values
+}
+
+infix fun CronExpressionSummary.shouldHaveAllHours(values: Collection<Int>) {
+    hour.map { it.value } shouldContainAll values
+}
+
+infix fun CronExpressionSummary.shouldHaveAllDaysOfMonth(values: Collection<Int>) {
+    dayOfMonth.map { it.value } shouldContainAll values
+}
+
+infix fun CronExpressionSummary.shouldHaveAllMonths(values: Collection<Int>) {
+    month.map { it.value } shouldContainAll values
+}
+
+infix fun CronExpressionSummary.shouldHaveAllDaysOfWeek(values: Collection<Int>) {
+    dayOfWeek.map { it.value } shouldContainAll values
+}

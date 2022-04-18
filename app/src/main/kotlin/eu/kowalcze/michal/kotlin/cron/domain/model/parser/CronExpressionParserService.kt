@@ -48,7 +48,7 @@ class CronExpressionParserService {
 private val CRON_EXPRESSION_FIELDS = Regex("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)")
 
 class FieldPatternNotMatched(pattern: String) :
-    IllegalArgumentException("Provided value: '${pattern}' is not recognizable by any of known parsers")
+    IllegalArgumentException("Provided value: '${pattern}' is not recognizable by any known parser")
 
 
 class CronExpressionNotMatched(line: CronExpressionLine) :

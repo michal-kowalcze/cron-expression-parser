@@ -17,8 +17,8 @@ fun randomCalendarField(customization: CalendarFieldConfiguration.() -> Unit): C
 }
 
 
-fun randomMinute(value: Int? = null) = Minute(value ?: randomFromInclusiveRange(0, 60))
-fun randomHour(value: Int? = null) = Hour(value ?: randomFromInclusiveRange(0, 24))
+fun randomMinute(value: Int? = null) = Minute(value ?: randomFromInclusiveRange(0, 59))
+fun randomHour(value: Int? = null) = Hour(value ?: randomFromInclusiveRange(0, 23))
 fun randomDayOfMonth(value: Int? = null) = DayOfMonth(value ?: randomFromInclusiveRange(1, 31))
 fun randomMonth(value: Int? = null) = Month(value ?: randomFromInclusiveRange(1, 12))
 fun randomDayOfWeek(value: Int? = null) = DayOfWeek(value ?: randomFromInclusiveRange(1, 7))

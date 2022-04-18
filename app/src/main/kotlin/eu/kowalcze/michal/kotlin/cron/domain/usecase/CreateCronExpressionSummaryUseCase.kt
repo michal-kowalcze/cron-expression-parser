@@ -10,7 +10,7 @@ class CreateCronExpressionSummaryUseCase
     private val cronExpressionParserService: CronExpressionParserService,
 ) {
     fun parse(input: CronExpressionLine): CronExpressionSummary {
-        logger.debug("Processing: {}", input)
+        logger.debug("Creating summary for: {}", input)
 
         val cronExpression = cronExpressionParserService.parse(input)
 

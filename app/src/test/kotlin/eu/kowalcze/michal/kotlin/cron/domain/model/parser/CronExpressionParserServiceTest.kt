@@ -27,7 +27,22 @@ class CronExpressionParserServiceTest : StringSpec({
             exception.message shouldBe "Provided input: '${line}' does not match a cron expression defined by the regex: (\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)"
         }
     }
+    "should not convert line due to parsing problem (pattern not supported)"{
+        listOf(
+            "1 2 3 4 5-6 command" to "5-6",
+            "1 2 3 4 */1 command" to "*/1",
+            "1 2 3 4 1-5/2 command" to "1-5/2",
+        ).forAll { (line, failingValue) ->
+            // given
+            val cronExpressionLine = CronExpressionLine(line)
 
+            // when
+            val exception = shouldThrow<FieldPatternNotMatched> { tested.parse(cronExpressionLine) }
+
+            // then
+            exception.message shouldBe "Provided value: '${failingValue}' is not recognizable by any known parser"
+        }
+    }
     "should create a valid cron expression"{
         listOf(
             "* * * * * a-simple-command",
