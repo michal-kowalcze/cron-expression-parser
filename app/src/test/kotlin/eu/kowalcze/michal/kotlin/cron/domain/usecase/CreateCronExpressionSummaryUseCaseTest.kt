@@ -1,6 +1,7 @@
 package eu.kowalcze.michal.kotlin.cron.domain.usecase
 
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
+import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionNotMatched
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
@@ -8,8 +9,8 @@ import io.kotest.inspectors.forAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
-internal class ParseCronExpressionUseCaseTest : StringSpec({
-    val tested = ParseCronExpressionUseCase(CronExpressionParserService())
+internal class CreateCronExpressionSummaryUseCaseTest : StringSpec({
+    val tested = CreateCronExpressionSummaryUseCase(CronExpressionParserService())
 
     "should not convert line due to parsing problem (regex not matched)"{
         listOf(
@@ -20,7 +21,7 @@ internal class ParseCronExpressionUseCaseTest : StringSpec({
             "1 2 3 4 5",
         ).forAll { line ->
             // given
-            val cronExpressionLine = CronExpressionLine.from(line)
+            val cronExpressionLine = CronExpressionLine(line)
 
             // when
             val exception = shouldThrow<CronExpressionNotMatched> { tested.parse(cronExpressionLine) }
@@ -36,13 +37,13 @@ internal class ParseCronExpressionUseCaseTest : StringSpec({
             "* * * * * a-simple-command with blank arguments",
         ).forAll { line ->
             // given
-            val cronExpressionLine = CronExpressionLine.from(line)
+            val cronExpressionLine = CronExpressionLine(line)
 
             // when
-            val expression = tested.parse(cronExpressionLine)
+            val summary = tested.parse(cronExpressionLine)
 
             // then
-            expression shouldNotBe null
+            summary shouldNotBe null
         }
     }
 })

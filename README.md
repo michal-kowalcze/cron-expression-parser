@@ -23,11 +23,15 @@ fine.
 
 ## Development
 
-### Project structure
+### Named field vs. general convention
 
-TBC (packages,..)
+While it is technically possible to have a common denominator for any cron expression field and access field-related
+data in an indexed approach (e.g. `cronExpression[MINUTE]`) the current approach uses separate fields in an explicit
+way (e.g. `cronExpression.minute`). While the former approach provides greater flexibility while adding/removing fields
+the latter is more explicit and simplifies creation of aggregates (`CronExpression`, `CronExpressionSummary`).
 
 ### Code style
+
 This project contains `.editorconfig` file. Configure your IDE to use it.
 
 ### Dependencies

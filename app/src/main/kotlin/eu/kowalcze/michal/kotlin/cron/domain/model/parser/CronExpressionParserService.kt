@@ -4,31 +4,30 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarFieldP
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Command
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpression
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.PossibleValuesFieldPattern
-data class ParserInput(
-    val minute: String,
-    val hour: String,
-    val dayOfMonth: String,
-    val month: String,
-    val dayOfWeek: String,
-    val command: String,
-)
 
 class CronExpressionParserService {
     // order parsers from the most specific to the least specific
+    //TODO support other pattern expressions
     private val parsers = listOf(
         AnyValueParser(),
         SingleNumberParser(),
     )
 
     //TODO add range limits
-    fun parse(parserInput: ParserInput) = CronExpression(
-        minute = parseFieldPattern(parserInput.minute),
-        hour = parseFieldPattern(parserInput.hour),
-        dayOfMonth = parseFieldPattern(parserInput.dayOfMonth),
-        month = parseFieldPattern(parserInput.month),
-        dayOfWeek = parseFieldPattern(parserInput.dayOfWeek),
-        command = Command(parserInput.command),
-    )
+    fun parse(line: CronExpressionLine): CronExpression {
+
+        val match = CRON_EXPRESSION_FIELDS.matchEntire(line.value)
+            ?: throw CronExpressionNotMatched(line)
+
+        return CronExpression(
+            minute = parseFieldPattern(match.groupValues[1]),
+            hour = parseFieldPattern(match.groupValues[2]),
+            dayOfMonth = parseFieldPattern(match.groupValues[3]),
+            month = parseFieldPattern(match.groupValues[4]),
+            dayOfWeek = parseFieldPattern(match.groupValues[5]),
+            command = Command(match.groupValues[6]),
+        )
+    }
 
     private fun parseFieldPattern(pattern: String): CalendarFieldPattern {
         val parsedFields = pattern.split(",")
@@ -46,6 +45,11 @@ class CronExpressionParserService {
             .firstOrNull() ?: throw FieldPatternNotMatched(pattern)
 }
 
+private val CRON_EXPRESSION_FIELDS = Regex("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)")
+
 class FieldPatternNotMatched(pattern: String) :
     IllegalArgumentException("Provided value: '${pattern}' is not recognizable by any of known parsers")
 
+
+class CronExpressionNotMatched(line: CronExpressionLine) :
+    IllegalArgumentException("Provided input: '${line.value}' does not match a cron expression defined by the regex: $CRON_EXPRESSION_FIELDS")
