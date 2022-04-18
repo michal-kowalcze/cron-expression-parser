@@ -4,15 +4,29 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.CronExpression
 import eu.kowalcze.michal.kotlin.cron.domain.model.CronExpressionLine
 import eu.kowalcze.michal.kotlin.cron.logger
 
-class ParseCronExpressionUseCase {
+class ParseCronExpressionUseCase(
+    private val cronExpressionParserService: CronExpressionParserService,
+) {
 
     fun parse(input: CronExpressionLine): CronExpression {
-        logger.debug("Processing: {}",input)
+        logger.debug("Processing: {}", input)
+
+        val parserInput = prepareInput(input)
+        return cronExpressionParserService.parse(parserInput)
+    }
+
+    private fun prepareInput(input: CronExpressionLine): ParserInput {
         val match = CRON_EXPRESSION_FIELDS.matchEntire(input.value)
             ?: throw CronExpressionNotMatched(input)
 
-        val tokens = match.groupValues.subList(1, match.groupValues.size)
-        return CronExpression.createFrom(tokens)
+        return ParserInput(
+            minute = match.groupValues[1],
+            hour = match.groupValues[2],
+            dayOfMonth = match.groupValues[3],
+            month = match.groupValues[4],
+            dayOfWeek = match.groupValues[5],
+            command = match.groupValues[6],
+        )
     }
 
     companion object {

@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
 internal class ParseCronExpressionUseCaseTest : StringSpec({
-    val tested = ParseCronExpressionUseCase()
+    val tested = ParseCronExpressionUseCase(CronExpressionParserService())
 
     "should not convert line due to parsing problem (regex not matched)"{
         listOf(
