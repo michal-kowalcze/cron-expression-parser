@@ -8,8 +8,12 @@ class AnyValueFieldPattern<TYPE : CalendarField> : CalendarFieldPattern<TYPE> {
     override fun isMatched(calendarField: CalendarField) = true
 }
 
-class SingleNumberFieldPattern<TYPE : CalendarField>(private val value: Int) : CalendarFieldPattern<TYPE> {
+class SingleValueFieldPattern<TYPE : CalendarField>(private val value: Int) : CalendarFieldPattern<TYPE> {
     override fun isMatched(calendarField: CalendarField): Boolean = this.value == calendarField.value
+}
+
+class RangeOfValuesFieldPattern<TYPE : CalendarField>(private val range: IntRange) : CalendarFieldPattern<TYPE> {
+    override fun isMatched(calendarField: CalendarField): Boolean = this.range.contains(calendarField.value)
 }
 
 class PossibleValuesFieldPattern<TYPE : CalendarField>(private val patterns: List<CalendarFieldPattern<TYPE>>) :

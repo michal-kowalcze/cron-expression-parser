@@ -44,7 +44,8 @@ In case you would like to introduce a new pattern remember to make following cha
 
 * Add a new type of `ListElementParser` - to support extracting pattern values from the string input.
 * Update `CronExpressionParserService.parsers` field to use created parser.
-* Add a new type of `CalendarFieldPattern` to support matching for provided values.
+* Add a new type of `CalendarFieldPattern` to support matching for provided values in case existing fields are not
+  sufficient.
 
 ### Cron fields
 

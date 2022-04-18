@@ -15,8 +15,8 @@ class SingleNumberParserTest : FunSpec({
         val outsideOfRange = upperLimit + 1
 
         // when
-        val exception = shouldThrow<ValueOutsideOfLimitException> {
-            SingleNumberParser.tryParse<CalendarField>(outsideOfRange.toString(), 0, range)
+        val exception = shouldThrow<SingleValueOutsideOfLimitException> {
+            SingleValueParser.tryParse<CalendarField>(outsideOfRange.toString(), 0, range)
         }
 
         // then

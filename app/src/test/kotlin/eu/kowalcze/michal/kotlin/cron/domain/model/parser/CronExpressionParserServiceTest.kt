@@ -30,7 +30,6 @@ class CronExpressionParserServiceTest : StringSpec({
 
     "should not convert line due to parsing problem (pattern not supported)"{
         listOf(
-            "1 2 3 4 5-6 command" to "5-6",
             "1 2 3 4 */1 command" to "*/1",
             "1 2 3 4 1-5/2 command" to "1-5/2",
         ).forAll { (line, failingValue) ->
@@ -57,7 +56,26 @@ class CronExpressionParserServiceTest : StringSpec({
             val cronExpressionLine = CronExpressionLine(line)
 
             // when
-            val exception = shouldThrow<ValueOutsideOfLimitException> { tested.parse(cronExpressionLine) }
+            val exception = shouldThrow<SingleValueOutsideOfLimitException> { tested.parse(cronExpressionLine) }
+
+            // then
+            exception.message shouldBe expectedMessage
+        }
+    }
+
+    "should not convert line due to parsing problem (range not within range)"{
+        listOf(
+            "30-70 * * * * command" to "Provided value: '30-70' at index:1 is not within limit: 0..59",
+            "* 1-25 * * * command" to "Provided value: '1-25' at index:2 is not within limit: 0..23",
+            "* * 0-40 * * command" to "Provided value: '0-40' at index:3 is not within limit: 1..31",
+            "* * * 0-1 * command" to "Provided value: '0-1' at index:4 is not within limit: 1..12",
+            "* * * * 7-9 command" to "Provided value: '7-9' at index:5 is not within limit: 1..7",
+        ).forAll { (line, expectedMessage) ->
+            // given
+            val cronExpressionLine = CronExpressionLine(line)
+
+            // when
+            val exception = shouldThrow<RangeOutOfLimitException> { tested.parse(cronExpressionLine) }
 
             // then
             exception.message shouldBe expectedMessage
@@ -68,6 +86,8 @@ class CronExpressionParserServiceTest : StringSpec({
         listOf(
             "* * * * * a-simple-command",
             "* * * * * a-simple-command with blank arguments",
+            "* 1 2 * * single-values-command",
+            "* 1 2 3-4 * range-command",
         ).forAll { line ->
             // given
             val cronExpressionLine = CronExpressionLine(line)

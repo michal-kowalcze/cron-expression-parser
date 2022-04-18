@@ -41,6 +41,23 @@ internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
         cronExpressionSummary shouldHaveAllDaysOfWeek listOf(7)
         cronExpressionSummary.command.value shouldBe "simple-command"
     }
+
+
+    test("should provide proper summary for range") {
+        // given
+        val line = CronExpressionLine("1-4 1-5 1-10 6-8 5-7 simple-command")
+
+        // when
+        val cronExpressionSummary = tested.createSummary(line)
+
+        // then
+        cronExpressionSummary shouldHaveAllMinutes listOf(1, 2, 3, 4)
+        cronExpressionSummary shouldHaveAllHours listOf(1, 2, 3, 4, 5)
+        cronExpressionSummary shouldHaveAllDaysOfMonth listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        cronExpressionSummary shouldHaveAllMonths listOf(6, 7, 8)
+        cronExpressionSummary shouldHaveAllDaysOfWeek listOf(5, 6, 7)
+        cronExpressionSummary.command.value shouldBe "simple-command"
+    }
 })
 
 

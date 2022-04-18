@@ -4,10 +4,10 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.*
 
 class CronExpressionParserService {
     // order parsers from the most specific to the least specific
-    //TODO support other pattern expressions
     private val parsers = listOf(
         AnyValueParser,
-        SingleNumberParser,
+        RangeOfValuesParser,
+        SingleValueParser,
     )
 
     fun parse(line: CronExpressionLine): CronExpression {
@@ -30,10 +30,10 @@ class CronExpressionParserService {
     private fun <TYPE : CalendarField> parseFieldPattern(
         fields: List<String>,
         fieldIndex: Int,
-        range: IntRange
+        limit: IntRange
     ): CalendarFieldPattern<TYPE> {
         val parsedFields = fields[fieldIndex].split(",")
-            .map { parseExceptComma<TYPE>(it, fieldIndex, range) }
+            .map { parseExceptComma<TYPE>(it, fieldIndex, limit) }
 
         return if (parsedFields.size == 1) {
             parsedFields[0]
@@ -45,9 +45,9 @@ class CronExpressionParserService {
     private fun <TYPE : CalendarField> parseExceptComma(
         pattern: String,
         fieldIndex: Int,
-        range: IntRange
+        limit: IntRange
     ): CalendarFieldPattern<TYPE> {
-        return parsers.mapNotNull { it.tryParse<TYPE>(pattern, fieldIndex, range) }
+        return parsers.mapNotNull { it.tryParse<TYPE>(pattern, fieldIndex, limit) }
             .firstOrNull() ?: throw FieldPatternNotMatched(pattern, fieldIndex)
     }
 }

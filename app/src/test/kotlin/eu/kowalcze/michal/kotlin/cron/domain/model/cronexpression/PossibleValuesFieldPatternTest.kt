@@ -69,6 +69,6 @@ private class PossibleValuesConfiguration {
     }
 
     fun single(value: Int) {
-        patterns.add(SingleNumberFieldPattern(value))
+        patterns.add(SingleValueFieldPattern(value))
     }
 }
