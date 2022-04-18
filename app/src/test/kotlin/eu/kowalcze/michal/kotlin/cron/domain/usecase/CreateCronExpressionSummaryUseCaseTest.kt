@@ -1,21 +1,21 @@
 package eu.kowalcze.michal.kotlin.cron.domain.usecase
 
+import eu.kowalcze.michal.kotlin.cron.config.ApplicationConfig
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpressionSummary
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
-import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 
 internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
-    val tested = CreateCronExpressionSummaryUseCase(CronExpressionParserService())
+    val tested = ApplicationConfig.createCronExpressionSummaryUseCase
 
     test("should provide proper summary for match-all") {
         // given
         val line = CronExpressionLine("* * * * * a command with some space-separated arguments")
 
         // when
-        val cronExpressionSummary = tested.parse(line)
+        val cronExpressionSummary = tested.createSummary(line)
 
         // then
         cronExpressionSummary shouldHaveAllMinutes IntRange(0, 59).distinct()
@@ -31,7 +31,7 @@ internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
         val line = CronExpressionLine("1 1,2,5 1,10 6 7 simple-command")
 
         // when
-        val cronExpressionSummary = tested.parse(line)
+        val cronExpressionSummary = tested.createSummary(line)
 
         // then
         cronExpressionSummary shouldHaveAllMinutes listOf(1)

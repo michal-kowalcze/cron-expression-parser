@@ -9,10 +9,10 @@ class CreateCronExpressionSummaryUseCase
     (
     private val cronExpressionParserService: CronExpressionParserService,
 ) {
-    fun parse(input: CronExpressionLine): CronExpressionSummary {
-        logger.debug("Creating summary for: {}", input)
+    fun createSummary(line: CronExpressionLine): CronExpressionSummary {
+        logger.debug("Creating summary for: {}", line)
 
-        val cronExpression = cronExpressionParserService.parse(input)
+        val cronExpression = cronExpressionParserService.parse(line)
 
         return CronExpressionSummary(
             minute = Minute.allValues().filter { cronExpression.minute.isMatched(it) },
