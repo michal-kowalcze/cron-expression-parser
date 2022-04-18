@@ -29,4 +29,20 @@ command       a command is  not as important
             String(out.toByteArray()) shouldBe expectedOutput
         }
     }
+
+    "should display error information"{
+        listOf(
+            "1 2 3 4 X command" to "ERROR: Provided value: 'X' at index:5 is not recognizable by any known parser\n",
+        ).forAll { (line, expectedOutput) ->
+            // given
+            val out = ByteArrayOutputStream()
+            val app = App(PrintStream(out))
+
+            // when
+            app.printSummary(line)
+
+            // then
+            String(out.toByteArray()) shouldBe expectedOutput
+        }
+    }
 })

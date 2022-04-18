@@ -8,18 +8,22 @@ import java.io.PrintStream
 fun main(args: Array<String>) {
     if (args.size != 1) {
         println("Expected only one argument, got: ${args.toList()}")
-        return
+        System.exit(ERROR_INVALID_ARGUMENTS)
     }
 
-    App(System.out).printSummary(args[0])
+    val result = App(System.out).printSummary(args[0])
+    System.exit(result)
 }
+
+private const val OK = 0
+private const val ERROR_INVALID_ARGUMENTS = 1
+private const val ERROR_RUNTIME_EXCEPTION = 2
 
 class App(
     private val out: PrintStream = System.out,
 ) {
 
-    fun printSummary(line: String) {
-
+    fun printSummary(line: String) = kotlin.runCatching {
         val cronExpressionLine = CronExpressionLine(line)
 
         val cronExpressionSummary =
@@ -31,7 +35,10 @@ class App(
         printMatchedValues("month", cronExpressionSummary.month)
         printMatchedValues("day of week", cronExpressionSummary.dayOfWeek)
         printMatchedValues("command", cronExpressionSummary.command.value)
-    }
+        return OK
+    }.onFailure {
+        out.print("ERROR: ${it.message}\n")
+    }.getOrDefault(ERROR_RUNTIME_EXCEPTION)
 
     private fun printMatchedValues(fieldName: String, values: List<CalendarField>) {
         printMatchedValues(fieldName, values.map { it.value.toString() }.joinToString(separator = " "))
