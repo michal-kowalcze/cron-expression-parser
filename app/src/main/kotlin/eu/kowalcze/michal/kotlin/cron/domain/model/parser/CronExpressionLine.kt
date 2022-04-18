@@ -1,4 +1,4 @@
-package eu.kowalcze.michal.kotlin.cron.domain.model
+package eu.kowalcze.michal.kotlin.cron.domain.model.parser
 
 data class CronExpressionLine private constructor(
     val value: String,

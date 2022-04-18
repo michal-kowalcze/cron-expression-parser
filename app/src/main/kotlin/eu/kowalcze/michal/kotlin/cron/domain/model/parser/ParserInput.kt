@@ -1,4 +1,4 @@
-package eu.kowalcze.michal.kotlin.cron.domain.usecase
+package eu.kowalcze.michal.kotlin.cron.domain.model.parser
 
 
 data class ParserInput(
