@@ -3,6 +3,7 @@ package eu.kowalcze.michal.kotlin.cron.api.cmdline
 import eu.kowalcze.michal.kotlin.cron.config.ApplicationConfig
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarField
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
+import eu.kowalcze.michal.kotlin.cron.logger
 import java.io.PrintStream
 
 fun main(args: Array<String>) {
@@ -37,6 +38,7 @@ class App(
         printMatchedValues("command", cronExpressionSummary.command.value)
         return OK
     }.onFailure {
+        logger.error("Unable to execute use case for: {}", line, it)
         out.print("ERROR: ${it.message}\n")
     }.getOrDefault(ERROR_RUNTIME_EXCEPTION)
 
@@ -46,6 +48,11 @@ class App(
 
     private fun printMatchedValues(fieldName: String, value: String) {
         out.format("%-14s%s\n", fieldName, value)
+    }
+
+
+    companion object {
+        private val logger by logger()
     }
 }
 

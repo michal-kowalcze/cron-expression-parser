@@ -53,6 +53,14 @@ data in an indexed approach (e.g. `cronExpression[MINUTE]`) the current approach
 way (e.g. `cronExpression.minute`). While the former approach provides greater flexibility while adding/removing fields
 the latter is more explicit and simplifies creation of aggregates (`CronExpression`, `CronExpressionSummary`).
 
+### Execution flow
+
+1. `App` class is responsible for translating command line arguments to the domain format.
+2. `CreateCronExpressionSummaryUseCase` orchestrates execution flow:
+    1. `CronExpressionParserService` uses internal list of parsers to create `CronExpression` object
+       with `CalendarFieldPattern` values.
+    2. Use case uses helper methods to generate all possible values for fields and filter only relevant.
+
 ### Code style
 
 This project contains `.editorconfig` file. Configure your IDE to use it.
