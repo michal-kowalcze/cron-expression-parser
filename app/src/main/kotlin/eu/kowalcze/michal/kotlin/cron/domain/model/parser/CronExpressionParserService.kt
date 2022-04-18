@@ -1,16 +1,23 @@
-package eu.kowalcze.michal.kotlin.cron.domain.usecase
+package eu.kowalcze.michal.kotlin.cron.domain.model.parser
 
-import eu.kowalcze.michal.kotlin.cron.domain.model.CalendarFieldPattern
-import eu.kowalcze.michal.kotlin.cron.domain.model.Command
-import eu.kowalcze.michal.kotlin.cron.domain.model.CronExpression
-import eu.kowalcze.michal.kotlin.cron.domain.model.PossibleValues
-import eu.kowalcze.michal.kotlin.cron.domain.model.parser.ParserInput
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarFieldPattern
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Command
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpression
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.PossibleValuesFieldPattern
+data class ParserInput(
+    val minute: String,
+    val hour: String,
+    val dayOfMonth: String,
+    val month: String,
+    val dayOfWeek: String,
+    val command: String,
+)
 
 class CronExpressionParserService {
-
+    // order parsers from the most specific to the least specific
     private val parsers = listOf(
-        SingleNumberParser(),
         AnyValueParser(),
+        SingleNumberParser(),
     )
 
     //TODO add range limits
@@ -30,7 +37,7 @@ class CronExpressionParserService {
         return if (parsedFields.size == 1) {
             parsedFields[0]
         } else {
-            PossibleValues(parsedFields)
+            PossibleValuesFieldPattern(parsedFields)
         }
     }
 

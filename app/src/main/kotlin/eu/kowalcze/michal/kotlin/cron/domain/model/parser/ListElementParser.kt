@@ -1,8 +1,8 @@
-package eu.kowalcze.michal.kotlin.cron.domain.usecase
+package eu.kowalcze.michal.kotlin.cron.domain.model.parser
 
-import eu.kowalcze.michal.kotlin.cron.domain.model.AnyValue
-import eu.kowalcze.michal.kotlin.cron.domain.model.CalendarFieldPattern
-import eu.kowalcze.michal.kotlin.cron.domain.model.SingleNumberFieldPattern
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.AnyValueFieldPattern
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarFieldPattern
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.SingleNumberFieldPattern
 
 interface ListElementParser {
     fun tryParse(value: String): CalendarFieldPattern?
@@ -21,7 +21,7 @@ class SingleNumberParser : ListElementParser {
 class AnyValueParser : ListElementParser {
     override fun tryParse(value: String) =
         if (value == ALL_VALUES_CHAR) {
-            AnyValue()
+            AnyValueFieldPattern
         } else {
             null
         }

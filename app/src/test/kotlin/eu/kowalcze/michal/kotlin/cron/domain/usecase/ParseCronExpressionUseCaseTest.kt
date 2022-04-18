@@ -1,6 +1,7 @@
 package eu.kowalcze.michal.kotlin.cron.domain.usecase
 
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
+import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll

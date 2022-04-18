@@ -1,14 +1,14 @@
 package eu.kowalcze.michal.kotlin.cron.domain.usecase
 
-import eu.kowalcze.michal.kotlin.cron.domain.model.CronExpression
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpression
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
+import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.ParserInput
 import eu.kowalcze.michal.kotlin.cron.logger
 
 class ParseCronExpressionUseCase(
     private val cronExpressionParserService: CronExpressionParserService,
 ) {
-
     fun parse(input: CronExpressionLine): CronExpression {
         logger.debug("Processing: {}", input)
 

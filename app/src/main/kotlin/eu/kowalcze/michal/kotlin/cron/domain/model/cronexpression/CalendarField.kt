@@ -1,6 +1,6 @@
-package eu.kowalcze.michal.kotlin.cron.domain.model
+package eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression
 
-abstract class CalendarField(
+sealed class CalendarField(
     val value: Int
 )
 
