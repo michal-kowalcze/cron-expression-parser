@@ -13,7 +13,7 @@ class SingleNumberFieldPatternTest : FunSpec({
         val givenField = randomCalendarField {
             value = givenValue
         }
-        val singleNumberFieldPattern = SingleNumberFieldPattern(value = givenValue)
+        val singleNumberFieldPattern = SingleNumberFieldPattern<CalendarField>(value = givenValue)
 
         // when
         val matched = singleNumberFieldPattern.isMatched(givenField)
@@ -27,7 +27,7 @@ class SingleNumberFieldPatternTest : FunSpec({
         val givenField = randomCalendarField {
         }
         val valueDifferentThanGiven = givenField.value + randomValueForAnyField()
-        val singleNumberFieldPattern = SingleNumberFieldPattern(value = valueDifferentThanGiven)
+        val singleNumberFieldPattern = SingleNumberFieldPattern<CalendarField>(value = valueDifferentThanGiven)
 
         // when
         val matched = singleNumberFieldPattern.isMatched(givenField)

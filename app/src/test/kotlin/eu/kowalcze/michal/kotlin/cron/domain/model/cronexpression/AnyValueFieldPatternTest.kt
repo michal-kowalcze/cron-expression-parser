@@ -6,11 +6,11 @@ import io.kotest.matchers.shouldBe
 
 class AnyValueFieldPatternTest : FunSpec({
 
-    val anyValueFieldPattern = AnyValueFieldPattern
+    val anyValueFieldPattern = AnyValueFieldPattern<CalendarField>()
 
     test("should always match a value") {
         // given
-        val givenField = randomCalendarField{}
+        val givenField = randomCalendarField {}
 
         // when
         val matched = anyValueFieldPattern.isMatched(givenField)

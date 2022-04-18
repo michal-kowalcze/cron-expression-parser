@@ -1,18 +1,19 @@
 package eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression
 
-sealed interface CalendarFieldPattern {
+sealed interface CalendarFieldPattern<TYPE : CalendarField> {
     fun isMatched(calendarField: CalendarField): Boolean
 }
 
-object AnyValueFieldPattern : CalendarFieldPattern {
+class AnyValueFieldPattern<TYPE : CalendarField> : CalendarFieldPattern<TYPE> {
     override fun isMatched(calendarField: CalendarField) = true
 }
 
-class SingleNumberFieldPattern(private val value: Int) : CalendarFieldPattern {
+class SingleNumberFieldPattern<TYPE : CalendarField>(private val value: Int) : CalendarFieldPattern<TYPE> {
     override fun isMatched(calendarField: CalendarField): Boolean = this.value == calendarField.value
 }
 
-class PossibleValuesFieldPattern(private val patterns: List<CalendarFieldPattern>) : CalendarFieldPattern {
+class PossibleValuesFieldPattern<TYPE : CalendarField>(private val patterns: List<CalendarFieldPattern<TYPE>>) :
+    CalendarFieldPattern<TYPE> {
 
     init {
         if (patterns.isEmpty()) throw NoPatternsProvidedException()

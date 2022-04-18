@@ -1,9 +1,6 @@
 package eu.kowalcze.michal.kotlin.cron.domain.model.parser
 
-import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarFieldPattern
-import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Command
-import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CronExpression
-import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.PossibleValuesFieldPattern
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.*
 
 class CronExpressionParserService {
     // order parsers from the most specific to the least specific
@@ -29,9 +26,9 @@ class CronExpressionParserService {
         )
     }
 
-    private fun parseFieldPattern(pattern: String): CalendarFieldPattern {
+    private fun <TYPE : CalendarField> parseFieldPattern(pattern: String): CalendarFieldPattern<TYPE> {
         val parsedFields = pattern.split(",")
-            .map { parseExceptComma(it) }
+            .map { parseExceptComma<TYPE>(it) }
 
         return if (parsedFields.size == 1) {
             parsedFields[0]
@@ -40,7 +37,7 @@ class CronExpressionParserService {
         }
     }
 
-    private fun parseExceptComma(pattern: String): CalendarFieldPattern =
+    private fun <TYPE : CalendarField> parseExceptComma(pattern: String): CalendarFieldPattern<TYPE> =
         parsers.mapNotNull { it.tryParse(pattern) }
             .firstOrNull() ?: throw FieldPatternNotMatched(pattern)
 }

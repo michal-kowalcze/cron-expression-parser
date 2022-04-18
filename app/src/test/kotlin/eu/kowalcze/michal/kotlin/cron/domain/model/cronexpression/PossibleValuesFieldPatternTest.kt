@@ -54,7 +54,7 @@ class PossibleValuesFieldPatternTest : FunSpec({
     }
 })
 
-private fun possibleValues(customization: PossibleValuesConfiguration.() -> Unit): PossibleValuesFieldPattern {
+private fun possibleValues(customization: PossibleValuesConfiguration.() -> Unit): PossibleValuesFieldPattern<CalendarField> {
     val configuration = PossibleValuesConfiguration().apply(customization)
     return PossibleValuesFieldPattern(
         patterns = configuration.patterns,
@@ -62,10 +62,10 @@ private fun possibleValues(customization: PossibleValuesConfiguration.() -> Unit
 }
 
 private class PossibleValuesConfiguration {
-    val patterns = mutableListOf<CalendarFieldPattern>()
+    val patterns = mutableListOf<CalendarFieldPattern<CalendarField>>()
 
     fun any() {
-        patterns.add(AnyValueFieldPattern)
+        patterns.add(AnyValueFieldPattern())
     }
 
     fun single(value: Int) {
