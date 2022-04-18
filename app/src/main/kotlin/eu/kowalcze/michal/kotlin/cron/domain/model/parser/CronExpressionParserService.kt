@@ -6,29 +6,34 @@ class CronExpressionParserService {
     // order parsers from the most specific to the least specific
     //TODO support other pattern expressions
     private val parsers = listOf(
-        AnyValueParser(),
-        SingleNumberParser(),
+        AnyValueParser,
+        SingleNumberParser,
     )
 
-    //TODO add range limits
     fun parse(line: CronExpressionLine): CronExpression {
 
         val match = CRON_EXPRESSION_FIELDS.matchEntire(line.value)
             ?: throw CronExpressionNotMatched(line)
 
+        val fields = match.groupValues
+        // keep 1-based index to make it more human-readable
         return CronExpression(
-            minute = parseFieldPattern(match.groupValues[1]),
-            hour = parseFieldPattern(match.groupValues[2]),
-            dayOfMonth = parseFieldPattern(match.groupValues[3]),
-            month = parseFieldPattern(match.groupValues[4]),
-            dayOfWeek = parseFieldPattern(match.groupValues[5]),
-            command = Command(match.groupValues[6]),
+            minute = parseFieldPattern(fields, 1, Minute.RANGE),
+            hour = parseFieldPattern(fields, 2, Hour.RANGE),
+            dayOfMonth = parseFieldPattern(fields, 3, DayOfMonth.RANGE),
+            month = parseFieldPattern(fields, 4, Month.RANGE),
+            dayOfWeek = parseFieldPattern(fields, 5, DayOfWeek.RANGE),
+            command = Command(fields[6]),
         )
     }
 
-    private fun <TYPE : CalendarField> parseFieldPattern(pattern: String): CalendarFieldPattern<TYPE> {
-        val parsedFields = pattern.split(",")
-            .map { parseExceptComma<TYPE>(it) }
+    private fun <TYPE : CalendarField> parseFieldPattern(
+        fields: List<String>,
+        fieldIndex: Int,
+        range: IntRange
+    ): CalendarFieldPattern<TYPE> {
+        val parsedFields = fields[fieldIndex].split(",")
+            .map { parseExceptComma<TYPE>(it, fieldIndex, range) }
 
         return if (parsedFields.size == 1) {
             parsedFields[0]
@@ -37,15 +42,20 @@ class CronExpressionParserService {
         }
     }
 
-    private fun <TYPE : CalendarField> parseExceptComma(pattern: String): CalendarFieldPattern<TYPE> =
-        parsers.mapNotNull { it.tryParse(pattern) }
-            .firstOrNull() ?: throw FieldPatternNotMatched(pattern)
+    private fun <TYPE : CalendarField> parseExceptComma(
+        pattern: String,
+        fieldIndex: Int,
+        range: IntRange
+    ): CalendarFieldPattern<TYPE> {
+        return parsers.mapNotNull { it.tryParse<TYPE>(pattern, fieldIndex, range) }
+            .firstOrNull() ?: throw FieldPatternNotMatched(pattern, fieldIndex)
+    }
 }
 
 private val CRON_EXPRESSION_FIELDS = Regex("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)")
 
-class FieldPatternNotMatched(pattern: String) :
-    IllegalArgumentException("Provided value: '${pattern}' is not recognizable by any known parser")
+class FieldPatternNotMatched(pattern: String, fieldIndex: Int) :
+    IllegalArgumentException("Provided value: '${pattern}' at index:${fieldIndex} is not recognizable by any known parser")
 
 
 class CronExpressionNotMatched(line: CronExpressionLine) :

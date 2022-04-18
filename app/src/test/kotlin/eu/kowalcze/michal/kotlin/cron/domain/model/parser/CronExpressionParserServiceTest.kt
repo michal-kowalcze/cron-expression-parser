@@ -27,6 +27,7 @@ class CronExpressionParserServiceTest : StringSpec({
             exception.message shouldBe "Provided input: '${line}' does not match a cron expression defined by the regex: (\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)"
         }
     }
+
     "should not convert line due to parsing problem (pattern not supported)"{
         listOf(
             "1 2 3 4 5-6 command" to "5-6",
@@ -40,9 +41,29 @@ class CronExpressionParserServiceTest : StringSpec({
             val exception = shouldThrow<FieldPatternNotMatched> { tested.parse(cronExpressionLine) }
 
             // then
-            exception.message shouldBe "Provided value: '${failingValue}' is not recognizable by any known parser"
+            exception.message shouldBe "Provided value: '${failingValue}' at index:5 is not recognizable by any known parser"
         }
     }
+
+    "should not convert line due to parsing problem (value outside of range)"{
+        listOf(
+            "66 * * * * command" to "Provided value: '66' at index:1 is not within limit: 0..59",
+            "* 24 * * * command" to "Provided value: '24' at index:2 is not within limit: 0..23",
+            "* * 32 * * command" to "Provided value: '32' at index:3 is not within limit: 1..31",
+            "* * * 0 * command" to "Provided value: '0' at index:4 is not within limit: 1..12",
+            "* * * * 9 command" to "Provided value: '9' at index:5 is not within limit: 1..7",
+        ).forAll { (line, expectedMessage) ->
+            // given
+            val cronExpressionLine = CronExpressionLine(line)
+
+            // when
+            val exception = shouldThrow<ValueOutsideOfLimitException> { tested.parse(cronExpressionLine) }
+
+            // then
+            exception.message shouldBe expectedMessage
+        }
+    }
+
     "should create a valid cron expression"{
         listOf(
             "* * * * * a-simple-command",
