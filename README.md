@@ -23,7 +23,30 @@ fine.
 
 ## Development
 
-### Named field vs. general convention
+### General approach
+
+This project is structured according to the Hexagonal
+/ [Clean](https://blog.allegro.tech/2021/12/clean-architecture-story.html) Architecture approach and
+uses [Domain-Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) concepts.
+
+|  Package  | Content |
+|-----------|---------|
+| api       | Contain outside world connector |
+| config    | Configures / connects domain objects |
+| domain.model | Contains domain model |
+| domain.usecase | list of use cases |
+
+### Field patterns
+
+Hierarchy under `CalendarFieldPattern` is responsible for parsing cron fields.
+
+In case you would like to introduce a new pattern remember to make following changes:
+
+* Add a new type of `ListElementParser` - to support extracting pattern values from the string input.
+* Update `CronExpressionParserService.parsers` field to use created parser.
+* Add a new type of `CalendarFieldPattern` to support matching for provided values.
+
+### Cron fields
 
 While it is technically possible to have a common denominator for any cron expression field and access field-related
 data in an indexed approach (e.g. `cronExpression[MINUTE]`) the current approach uses separate fields in an explicit
