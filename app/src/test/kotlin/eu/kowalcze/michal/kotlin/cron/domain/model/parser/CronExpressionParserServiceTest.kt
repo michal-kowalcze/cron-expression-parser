@@ -31,7 +31,6 @@ class CronExpressionParserServiceTest : StringSpec({
     "should not convert line due to parsing problem (pattern not supported)"{
         listOf(
             "1 2 3 4 */1 command" to "*/1",
-            "1 2 3 4 1-5/2 command" to "1-5/2",
         ).forAll { (line, failingValue) ->
             // given
             val cronExpressionLine = CronExpressionLine(line)

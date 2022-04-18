@@ -43,9 +43,14 @@ object RangeOfValuesParser : ListElementParser {
         limit: IntRange
     ) =
         RANGE_REGEX.matchEntire(value)?.let { matchResult ->
-            val range = IntRange(
-                matchResult.groupValues[1].toInt(),
-                matchResult.groupValues[2].toInt()
+            val stepValue = matchResult.groupValues[4]
+            val step = if (stepValue.isNotBlank()) stepValue.toInt() else 1
+            if (step < 1) throw NonPositiveRangeStepException(value, fieldIndex, step)
+
+            val range = IntProgression.fromClosedRange(
+                rangeStart = matchResult.groupValues[1].toInt(),
+                rangeEnd = matchResult.groupValues[2].toInt(),
+                step = step,
             )
 
             if (range.isEmpty()) {
@@ -57,7 +62,7 @@ object RangeOfValuesParser : ListElementParser {
             RangeOfValuesFieldPattern<TYPE>(range)
         }
 
-    private val RANGE_REGEX = Regex("(\\d+)-(\\d+)")
+    private val RANGE_REGEX = Regex("(\\d+)-(\\d+)(/(\\d+))?")
 }
 
 class EmptyRangeException(value: String, fieldIndex: Int) :
@@ -65,3 +70,7 @@ class EmptyRangeException(value: String, fieldIndex: Int) :
 
 class RangeOutOfLimitException(value: String, fieldIndex: Int, limit: IntRange) :
     IllegalArgumentException("Provided value: '${value}' at index:${fieldIndex} is not within limit: $limit")
+
+
+class NonPositiveRangeStepException(value: String, fieldIndex: Int, step: Int) :
+    IllegalArgumentException("Provided value: '${value}' at index:${fieldIndex} defines a non-positive step: $step")

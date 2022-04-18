@@ -14,6 +14,7 @@ class RangeOfValuesParserTest : StringSpec({
             "-2",
             "1-",
             " 1-2 ",
+            "1-2/-1",
         ).forAll { value ->
             // when
             val result = RangeOfValuesParser.tryParse<CalendarField>(value, 1, 1..10)
@@ -47,4 +48,17 @@ class RangeOfValuesParserTest : StringSpec({
         // then
         exception.message shouldBe "Provided value: '1-2' at index:1 is not within limit: 2..10"
     }
+    "should fail when range is zero"{
+        // given
+        val value = "1-2/0"
+
+        // when
+        val exception = shouldThrow<NonPositiveRangeStepException> {
+            RangeOfValuesParser.tryParse<CalendarField>(value, 1, 2..10)
+        }
+
+        // then
+        exception.message shouldBe "Provided value: '1-2/0' at index:1 defines a non-positive step: 0"
+    }
+
 })

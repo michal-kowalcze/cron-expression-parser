@@ -12,7 +12,7 @@ class SingleValueFieldPattern<TYPE : CalendarField>(private val value: Int) : Ca
     override fun isMatched(calendarField: CalendarField): Boolean = this.value == calendarField.value
 }
 
-class RangeOfValuesFieldPattern<TYPE : CalendarField>(private val range: IntRange) : CalendarFieldPattern<TYPE> {
+class RangeOfValuesFieldPattern<TYPE : CalendarField>(private val range: IntProgression) : CalendarFieldPattern<TYPE> {
     override fun isMatched(calendarField: CalendarField): Boolean = this.range.contains(calendarField.value)
 }
 
