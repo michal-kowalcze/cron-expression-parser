@@ -13,4 +13,4 @@ private fun unwrapCompanionClass(name: String): String =
         name
     }
 
-private const val COMPANION_SUFFIX="\$Companion"
+private const val COMPANION_SUFFIX = "\$Companion"

@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldNotBe
 class CronExpressionParserServiceTest : StringSpec({
     val tested = CronExpressionParserService()
 
+    @Suppress("MaxLineLength")
     "should not convert line due to parsing problem (regex not matched)"{
         listOf(
             "1",
@@ -28,6 +29,7 @@ class CronExpressionParserServiceTest : StringSpec({
         }
     }
 
+    @Suppress("MaxLineLength")
     "should not convert line due to parsing problem (pattern not supported)"{
         listOf(
             "1 2 3 4 *-/1 command" to "*-/1",
