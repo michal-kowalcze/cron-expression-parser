@@ -1,6 +1,6 @@
 package eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression
 
-data class CronExpression constructor(
+data class CronExpression(
     val minute: CalendarFieldPattern<Minute>,
     val hour: CalendarFieldPattern<Hour>,
     val dayOfMonth: CalendarFieldPattern<DayOfMonth>,

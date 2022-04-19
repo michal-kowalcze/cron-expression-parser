@@ -5,5 +5,6 @@ import eu.kowalcze.michal.kotlin.cron.domain.usecase.CreateCronExpressionSummary
 
 object ApplicationConfig {
 
-    val createCronExpressionSummaryUseCase = CreateCronExpressionSummaryUseCase(CronExpressionParserService())
+    private val cronExpressionParserService = CronExpressionParserService()
+    val createCronExpressionSummaryUseCase = CreateCronExpressionSummaryUseCase(cronExpressionParserService)
 }

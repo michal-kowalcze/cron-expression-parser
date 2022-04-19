@@ -5,6 +5,7 @@ import eu.kowalcze.michal.kotlin.cron.utils.randomValueForAnyField
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 
 class PossibleValuesFieldPatternTest : FunSpec({
 
@@ -52,6 +53,17 @@ class PossibleValuesFieldPatternTest : FunSpec({
         // then
         matched shouldBe false
     }
+
+    test("should not wrap a single field") {
+        // given
+        val singlePattern = SingleValueFieldPattern<CalendarField>(randomValueForAnyField())
+
+        // when
+        val notWrappedPattern = PossibleValuesFieldPattern.optionalWrapWithPossibleValues(listOf(singlePattern))
+
+        // then
+        notWrappedPattern shouldBeSameInstanceAs singlePattern
+    }
 })
 
 private fun possibleValues(customization: PossibleValuesConfiguration.() -> Unit): PossibleValuesFieldPattern<CalendarField> {
@@ -68,7 +80,7 @@ private class PossibleValuesConfiguration {
         patterns.add(AnyValueFieldPattern())
     }
 
-    fun single(value: Int) {
+    fun single(value: Int = randomValueForAnyField()) {
         patterns.add(SingleValueFieldPattern(value))
     }
 }

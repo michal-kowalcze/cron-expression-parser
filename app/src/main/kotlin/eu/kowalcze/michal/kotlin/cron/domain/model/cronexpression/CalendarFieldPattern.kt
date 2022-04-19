@@ -25,6 +25,15 @@ class PossibleValuesFieldPattern<TYPE : CalendarField>(private val patterns: Lis
 
     override fun isMatched(calendarField: CalendarField): Boolean =
         patterns.any { it.isMatched(calendarField) }
+
+    companion object {
+        fun <TYPE : CalendarField> optionalWrapWithPossibleValues(patterns: List<CalendarFieldPattern<TYPE>>) =
+            if ( patterns.size==1){
+                patterns[0]
+            }else{
+                PossibleValuesFieldPattern(patterns)
+            }
+    }
 }
 
 

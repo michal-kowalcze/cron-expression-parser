@@ -6,7 +6,6 @@ sealed interface ListElementParser {
     fun <TYPE : CalendarField> tryParse(value: String, fieldIndex: Int, limit: IntRange): CalendarFieldPattern<TYPE>?
 }
 
-
 object SingleValueParser : ListElementParser {
 
     override fun <TYPE : CalendarField> tryParse(value: String, fieldIndex: Int, limit: IntRange) =
@@ -33,7 +32,6 @@ object AnyValueParser : ListElementParser {
         }
 
     private const val ALL_VALUES_CHAR = "*"
-
 }
 
 object RangeOfValuesParser : ListElementParser {

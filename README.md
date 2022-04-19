@@ -68,6 +68,12 @@ list of fields it is easier to maintain the code.
 As the `generate all values for all fields` logic is very simple there was no point in extracting this logic to a
 separate service / service method.
 
+### Dependency injection
+
+As the code base is very simple the dependencies between beans are managed manually. The `ApplicationConfig` class holds
+values for all domain object (and corresponds to
+the [Spring](https://spring.io/projects/spring-framework) `ApplicationContext` instance).
+
 ### Code style
 
 This project contains `.editorconfig` file. Configure your IDE to use it.

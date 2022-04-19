@@ -16,8 +16,8 @@ class CronExpressionParserService {
         val match = CRON_EXPRESSION_FIELDS.matchEntire(line.value)
             ?: throw CronExpressionNotMatched(line)
 
+        // the first group value is at index 1 - and keep 1-based index to make it more human-readable in exception messages
         val fields = match.groupValues
-        // keep 1-based index to make it more human-readable
         return CronExpression(
             minute = parseFieldPattern(fields, 1, Minute.RANGE),
             hour = parseFieldPattern(fields, 2, Hour.RANGE),
@@ -32,27 +32,24 @@ class CronExpressionParserService {
         fields: List<String>,
         fieldIndex: Int,
         limit: IntRange
-    ): CalendarFieldPattern<TYPE> {
-        val parsedFields = fields[fieldIndex].split(",")
+    ): CalendarFieldPattern<TYPE> =
+        fields[fieldIndex].split(POSSIBLE_VALUES_DELIMITER)
             .map { parseExceptComma<TYPE>(it, fieldIndex, limit) }
+            .let {
+                PossibleValuesFieldPattern.optionalWrapWithPossibleValues(it)
+            }
 
-        return if (parsedFields.size == 1) {
-            parsedFields[0]
-        } else {
-            PossibleValuesFieldPattern(parsedFields)
-        }
-    }
 
     private fun <TYPE : CalendarField> parseExceptComma(
         pattern: String,
         fieldIndex: Int,
         limit: IntRange
-    ): CalendarFieldPattern<TYPE> {
-        return parsers.mapNotNull { it.tryParse<TYPE>(pattern, fieldIndex, limit) }
+    ): CalendarFieldPattern<TYPE> =
+        parsers.mapNotNull { it.tryParse<TYPE>(pattern, fieldIndex, limit) }
             .firstOrNull() ?: throw FieldPatternNotMatched(pattern, fieldIndex)
-    }
 }
 
+private const val POSSIBLE_VALUES_DELIMITER = ","
 private val CRON_EXPRESSION_FIELDS = Regex("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)")
 
 class FieldPatternNotMatched(pattern: String, fieldIndex: Int) :

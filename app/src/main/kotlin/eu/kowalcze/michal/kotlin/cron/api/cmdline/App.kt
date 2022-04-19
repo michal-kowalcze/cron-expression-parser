@@ -5,20 +5,17 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarField
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
 import eu.kowalcze.michal.kotlin.cron.logger
 import java.io.PrintStream
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     if (args.size != 1) {
         println("Expected only one argument, got: ${args.toList()}")
-        System.exit(ERROR_INVALID_ARGUMENTS)
+        exitProcess(ERROR_INVALID_ARGUMENTS)
     }
 
     val result = App(System.out).printSummary(args[0])
-    System.exit(result)
+    exitProcess(result)
 }
-
-private const val OK = 0
-private const val ERROR_INVALID_ARGUMENTS = 1
-private const val ERROR_RUNTIME_EXCEPTION = 2
 
 class App(
     private val out: PrintStream = System.out,
@@ -55,4 +52,8 @@ class App(
         private val logger by logger()
     }
 }
+
+private const val OK = 0
+private const val ERROR_INVALID_ARGUMENTS = 1
+private const val ERROR_RUNTIME_EXCEPTION = 2
 
