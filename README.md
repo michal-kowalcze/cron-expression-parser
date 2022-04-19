@@ -29,6 +29,10 @@ This project is structured according to the Hexagonal
 / [Clean](https://blog.allegro.tech/2021/12/clean-architecture-story.html) Architecture approach and
 uses [Domain-Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) concepts.
 
+Separation between layers is guarded
+with [ArchUnit](https://www.archunit.org/) [check](app/src/test/kotlin/eu/kowalcze/michal/kotlin/cron/utils/ArchitectureTest.kt)
+.
+
 |  Package  | Content |
 |-----------|---------|
 | api       | Contain outside world connector |
@@ -74,9 +78,19 @@ As the code base is very simple the dependencies between beans are managed manua
 values for all domain object (and corresponds to
 the [Spring](https://spring.io/projects/spring-framework) `ApplicationContext` instance).
 
-### Code style
+### Static checks, code style
+
+Code is verified statically with the help of [detekt](https://detekt.dev/). Its rules are defined
+in the [detekt.yml](config/detekt/detekt.yml) file.
 
 This project contains `.editorconfig` file. Configure your IDE to use it.
+
+### Command-line code verification
+
+To run all execute following shell command:
+```bash
+./gradlew clean check
+```
 
 ### Dependencies
 

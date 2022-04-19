@@ -3,7 +3,7 @@ package eu.kowalcze.michal.kotlin.cron.api.cmdline
 import eu.kowalcze.michal.kotlin.cron.config.ApplicationConfig
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarField
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
-import eu.kowalcze.michal.kotlin.cron.logger
+import eu.kowalcze.michal.kotlin.cron.utils.logger
 import java.io.PrintStream
 import kotlin.system.exitProcess
 
