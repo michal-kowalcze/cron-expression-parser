@@ -1,4 +1,4 @@
-package eu.kowalcze.michal.kotlin.cron
+package eu.kowalcze.michal.kotlin.cron.utils
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
