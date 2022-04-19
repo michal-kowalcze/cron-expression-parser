@@ -36,6 +36,14 @@ uses [Domain-Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) 
 | domain.model | Contains domain model |
 | domain.usecase | list of use cases |
 
+### Execution flow
+
+1. `App` class is responsible for translating command line arguments to the domain format.
+2. `CreateCronExpressionSummaryUseCase` orchestrates execution flow:
+    1. `CronExpressionParserService` uses internal list of parsers to create `CronExpression` object
+       with `CalendarFieldPattern` values.
+    2. Use case uses helper methods to generate all possible values for fields and filter only relevant.
+
 ### Field patterns
 
 Hierarchy under `CalendarFieldPattern` is responsible for parsing cron fields.
@@ -52,15 +60,13 @@ In case you would like to introduce a new pattern remember to make following cha
 While it is technically possible to have a common denominator for any cron expression field and access field-related
 data in an indexed approach (e.g. `cronExpression[MINUTE]`) the current approach uses separate fields in an explicit
 way (e.g. `cronExpression.minute`). While the former approach provides greater flexibility while adding/removing fields
-the latter is more explicit and simplifies creation of aggregates (`CronExpression`, `CronExpressionSummary`).
+the latter simplifies creation of aggregates (`CronExpression`, `CronExpressionSummary`) and with the current constant
+list of fields it is easier to maintain the code.
 
-### Execution flow
+### Logic in CreateCronExpressionSummaryUseCase
 
-1. `App` class is responsible for translating command line arguments to the domain format.
-2. `CreateCronExpressionSummaryUseCase` orchestrates execution flow:
-    1. `CronExpressionParserService` uses internal list of parsers to create `CronExpression` object
-       with `CalendarFieldPattern` values.
-    2. Use case uses helper methods to generate all possible values for fields and filter only relevant.
+As the `generate all values for all fields` logic is very simple there was no point in extracting this logic to a
+separate service / service method.
 
 ### Code style
 
