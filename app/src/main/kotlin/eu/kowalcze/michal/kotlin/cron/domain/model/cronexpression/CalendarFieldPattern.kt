@@ -28,14 +28,13 @@ class PossibleValuesFieldPattern<TYPE : CalendarField>(private val patterns: Lis
 
     companion object {
         fun <TYPE : CalendarField> optionalWrapWithPossibleValues(patterns: List<CalendarFieldPattern<TYPE>>) =
-            if ( patterns.size==1){
+            if (patterns.size == 1) {
                 patterns[0]
-            }else{
+            } else {
                 PossibleValuesFieldPattern(patterns)
             }
     }
 }
-
 
 class NoPatternsProvidedException :
     IllegalArgumentException("PossibleValuesFieldPattern requires at least one pattern")
