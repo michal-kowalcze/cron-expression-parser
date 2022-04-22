@@ -59,6 +59,21 @@ internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
         cronExpressionSummary.command.value shouldBe "simple-command"
     }
 
+    test("should provide proper summary for range for named months") {
+        // given
+        val line = CronExpressionLine("1-4 1-5 1-10 JAN-dec 5-7 simple-command")
+
+        // when
+        val cronExpressionSummary = tested.createSummary(line)
+
+        // then
+        cronExpressionSummary shouldHaveAllMinutes listOf(1, 2, 3, 4)
+        cronExpressionSummary shouldHaveAllHours listOf(1, 2, 3, 4, 5)
+        cronExpressionSummary shouldHaveAllDaysOfMonth listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        cronExpressionSummary shouldHaveAllMonths listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+        cronExpressionSummary shouldHaveAllDaysOfWeek listOf(5, 6, 7)
+        cronExpressionSummary.command.value shouldBe "simple-command"
+    }
     test("should provide proper summary for range with step") {
         // given
         val line = CronExpressionLine("1-4/2 1-5/3 1-10/20 6-8/1 5-7/2 simple-command")
@@ -75,6 +90,16 @@ internal class CreateCronExpressionSummaryUseCaseTest : FunSpec({
         cronExpressionSummary.command.value shouldBe "simple-command"
     }
 
+    test("should provide proper summary for range with step and a year ") {
+        // given
+        val line = CronExpressionLine("1-4/2 1-5/3 1-10/20 6-8/1 5-7/2 2022 simple-command")
+
+        // when
+        val cronExpressionSummary = tested.createSummary(line)
+
+        // then
+        cronExpressionSummary shouldHaveAllYears listOf(2022)
+    }
 
     test("should provide proper summary for any with step") {
         // given
@@ -112,4 +137,7 @@ infix fun CronExpressionSummary.shouldHaveAllMonths(values: Collection<Int>) {
 
 infix fun CronExpressionSummary.shouldHaveAllDaysOfWeek(values: Collection<Int>) {
     dayOfWeek.map { it.value } shouldContainAll values
+}
+infix fun CronExpressionSummary.shouldHaveAllYears(values: Collection<Int>) {
+    year!!.map { it.value } shouldContainAll values
 }

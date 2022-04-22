@@ -6,15 +6,22 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.CalendarFieldP
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.RangeOfValuesFieldPattern
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.SingleValueFieldPattern
 
+
 sealed interface ListElementParser {
-    fun <TYPE : CalendarField> tryParse(value: String, fieldIndex: Int, limit: IntRange): CalendarFieldPattern<TYPE>?
+    fun <TYPE : CalendarField> tryParse(
+        value: String, fieldIndex: Int,
+        limit: IntRange,
+        conversion: String.() -> Int = { toInt() }
+    ): CalendarFieldPattern<TYPE>?
 }
 
 object SingleValueParser : ListElementParser {
 
-    override fun <TYPE : CalendarField> tryParse(value: String, fieldIndex: Int, limit: IntRange) =
+    override fun <TYPE : CalendarField> tryParse(
+        value: String, fieldIndex: Int, limit: IntRange, conversion: String.() -> Int
+    ) =
         try {
-            val parsedValue = value.toInt()
+            val parsedValue = conversion(value)
             if (!limit.contains(parsedValue)) {
                 throw SingleValueOutsideOfLimitException(value, fieldIndex, limit)
             }
@@ -28,7 +35,12 @@ class SingleValueOutsideOfLimitException(value: String, fieldIndex: Int, range: 
     IllegalArgumentException("Provided value: '${value}' at index:${fieldIndex} is not within limit: $range")
 
 object AnyValueParser : ListElementParser {
-    override fun <TYPE : CalendarField> tryParse(value: String, fieldIndex: Int, limit: IntRange) =
+    override fun <TYPE : CalendarField> tryParse(
+        value: String,
+        fieldIndex: Int,
+        limit: IntRange,
+        conversion: String.() -> Int,
+    ) =
         if (value == ALL_VALUES_CHAR) {
             AnyValueFieldPattern<TYPE>()
         } else {
@@ -42,7 +54,8 @@ object RangeOfValuesParser : ListElementParser {
     override fun <TYPE : CalendarField> tryParse(
         value: String,
         fieldIndex: Int,
-        limit: IntRange
+        limit: IntRange,
+        conversion: String.() -> Int,
     ) =
         RANGE_REGEX.matchEntire(value)?.let { matchResult ->
             val stepValue = matchResult.groupValues[STEP_INDEX]
@@ -50,8 +63,8 @@ object RangeOfValuesParser : ListElementParser {
             if (step < 1) throw NonPositiveRangeStepException(value, fieldIndex, step)
 
             val range = IntProgression.fromClosedRange(
-                rangeStart = matchResult.groupValues[RANGE_START_INDEX].toInt(),
-                rangeEnd = matchResult.groupValues[RANGE_END_INDEX].toInt(),
+                rangeStart = conversion(matchResult.groupValues[RANGE_START_INDEX] ),
+                rangeEnd =conversion(  matchResult.groupValues[RANGE_END_INDEX]),
                 step = step,
             )
 
@@ -64,17 +77,18 @@ object RangeOfValuesParser : ListElementParser {
             RangeOfValuesFieldPattern<TYPE>(range)
         }
 
-    private val RANGE_REGEX = Regex("(\\d+)-(\\d+)(/(\\d+))?")
-    private const val RANGE_START_INDEX=1
-    private const val RANGE_END_INDEX=2
-    private const val STEP_INDEX=4
+    private val RANGE_REGEX = Regex("([\\dA-Za-z]+)-([\\dA-Za-z]+)(/(\\d+))?")
+    private const val RANGE_START_INDEX = 1
+    private const val RANGE_END_INDEX = 2
+    private const val STEP_INDEX = 4
 }
 
 object AnyWithStepParser : ListElementParser {
     override fun <TYPE : CalendarField> tryParse(
         value: String,
         fieldIndex: Int,
-        limit: IntRange
+        limit: IntRange,
+        conversion: String.() -> Int,
     ) =
         ANY_WITH_STEP_REGEX.matchEntire(value)?.let { matchResult ->
             val step = matchResult.groupValues[STEP_GROUP_INDEX].toInt()
@@ -89,7 +103,7 @@ object AnyWithStepParser : ListElementParser {
         }
 
     private val ANY_WITH_STEP_REGEX = Regex("\\*/(\\d+)")
-    private const val STEP_GROUP_INDEX=1
+    private const val STEP_GROUP_INDEX = 1
 }
 
 class EmptyRangeException(value: String, fieldIndex: Int) :

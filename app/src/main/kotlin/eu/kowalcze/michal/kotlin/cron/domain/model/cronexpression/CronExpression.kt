@@ -6,6 +6,7 @@ data class CronExpression(
     val dayOfMonth: CalendarFieldPattern<DayOfMonth>,
     val month: CalendarFieldPattern<Month>,
     val dayOfWeek: CalendarFieldPattern<DayOfWeek>,
+    val year: CalendarFieldPattern<Year>?,
     val command: Command,
 )
 

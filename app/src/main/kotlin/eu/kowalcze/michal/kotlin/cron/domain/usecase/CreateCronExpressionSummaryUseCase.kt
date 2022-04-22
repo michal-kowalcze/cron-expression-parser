@@ -6,6 +6,7 @@ import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.DayOfWeek
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Hour
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Minute
 import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Month
+import eu.kowalcze.michal.kotlin.cron.domain.model.cronexpression.Year
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionLine
 import eu.kowalcze.michal.kotlin.cron.domain.model.parser.CronExpressionParserService
 import eu.kowalcze.michal.kotlin.cron.utils.logger
@@ -25,6 +26,7 @@ class CreateCronExpressionSummaryUseCase
             dayOfMonth = DayOfMonth.allValues().filter { cronExpression.dayOfMonth.isMatched(it) },
             month = Month.allValues().filter { cronExpression.month.isMatched(it) },
             dayOfWeek = DayOfWeek.allValues().filter { cronExpression.dayOfWeek.isMatched(it) },
+            year = cronExpression.year?.let { yearPattern -> Year.allValues().filter { yearPattern.isMatched(it) } },
             command = cronExpression.command,
         )
     }

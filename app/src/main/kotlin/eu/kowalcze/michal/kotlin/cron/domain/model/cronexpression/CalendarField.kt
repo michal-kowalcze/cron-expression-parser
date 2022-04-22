@@ -38,3 +38,9 @@ class DayOfWeek(value: Int) : CalendarField(value) {
         fun allValues() = RANGE.map { DayOfWeek(it) }
     }
 }
+class Year(value: Int) : CalendarField(value) {
+    companion object {
+        val RANGE = IntRange(1970, 9999)
+        fun allValues() = RANGE.map { Year(it) }
+    }
+}

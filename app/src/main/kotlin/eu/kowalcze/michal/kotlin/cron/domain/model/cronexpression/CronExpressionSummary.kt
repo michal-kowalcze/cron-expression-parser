@@ -6,5 +6,6 @@ data class CronExpressionSummary(
     val dayOfMonth: List<DayOfMonth>,
     val month: List<Month>,
     val dayOfWeek: List<DayOfWeek>,
+    val year: List<Year>?,
     val command: Command,
 )

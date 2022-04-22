@@ -32,6 +32,9 @@ class App(
         printMatchedValues("day of month", cronExpressionSummary.dayOfMonth)
         printMatchedValues("month", cronExpressionSummary.month)
         printMatchedValues("day of week", cronExpressionSummary.dayOfWeek)
+        if (cronExpressionSummary.year != null) {
+            printMatchedValues("year", cronExpressionSummary.year)
+        }
         printMatchedValues("command", cronExpressionSummary.command.value)
         return OK
     }.onFailure {
@@ -56,4 +59,3 @@ class App(
 private const val OK = 0
 private const val ERROR_INVALID_ARGUMENTS = 1
 private const val ERROR_RUNTIME_EXCEPTION = 2
-
